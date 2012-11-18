@@ -1,0 +1,6 @@
+.c2b-toolbar {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  z-index: 100;
+}

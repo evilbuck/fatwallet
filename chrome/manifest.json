@@ -1,16 +1,18 @@
 {
-	"name": "Better POF",
+	"name": "FatWallet",
 	"version": "1.0",
 	"manifest_version": 2,
-	"background": {
-		"page": "background.html"
-	},
 	"content_scripts": [
 		{
-			"matches": [ "http://pof.com/*", "http://plentyoffish.com/*", "http://www.pof.com/*", "http://*.googleapis.com/*" ],
+			"matches": [ "<all_urls>" ],
 			"js": [ 
+        "jquery.js",
+        "application.js",
         "bootstrap.js"
-			]
+			],
+      "css": [
+        "toolbar.css"
+      ]
 		}
 	],
 	"content_security_policy": "script-src 'self' https://maps.googleapis.com; object-src 'self'"
