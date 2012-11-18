@@ -1,27 +1,54 @@
 .c2b-toolbar {
   background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+  color: #7a7a7a;
+  overflow: auto;
   position: absolute;
+  right: 10px;
   top: 0;
-  right: 20px;
   z-index: 100;
 }
   
+  .c2b-toolbar .c2b-headline {
+    padding-left: 5px;
+    position: relative;
+    top: 9px;
+  }
+
   .c2b-toolbar .icon-logo {
-    background: red;
+    background: url('chrome-extension://__MSG_@@extension_id__/dollar-sign.png') 0 0 no-repeat;
     cursor: pointer;
-    width: 32px;
-    height: 32px;
+    /*float: left;*/
+    height: 37px;
+    margin-right: 6px;
+    padding-left: 25px;
+  }
+
+  .c2b-toolbar .close-button {
+    background: url('chrome-extension://__MSG_@@extension_id__/cancel.png') 0 0 no-repeat;
+    cursor: pointer;
+    height: 16px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 16px;
   }
 
   .c2b-toolbar .deals {
     display: none;
-  }
-
-  .c2b-toolbar > div {
-    border-bottom: 1px solid #fefefe;
-    padding: 4px 10px;
+    font: bold 12px Arial, Verdana, sans-serif;
   }
 
   .c2b-toolbar .deal {
     cursor: pointer;
+    padding: 4px 10px;
+  }
+
+  .c2b-toolbar .deal.alt {
+    background: #ededed;
+    color: #606060;
+  }
+
+  .c2b-toolbar .deal:hover {
+    color: #000;
   }
