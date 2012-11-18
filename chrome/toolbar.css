@@ -1,6 +1,27 @@
 .c2b-toolbar {
+  background: #fff;
   position: absolute;
   top: 0;
   right: 20px;
   z-index: 100;
 }
+  
+  .c2b-toolbar .icon-logo {
+    background: red;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+  }
+
+  .c2b-toolbar .deals {
+    display: none;
+  }
+
+  .c2b-toolbar > div {
+    border-bottom: 1px solid #fefefe;
+    padding: 4px 10px;
+  }
+
+  .c2b-toolbar .deal {
+    cursor: pointer;
+  }
