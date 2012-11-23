@@ -21,14 +21,24 @@
     this.user.save();
     this.register_listener();
     this.register_pusher();
+
+    // TODO: check for new code and replace the app object
   };
 
   App.prototype.register_listener = function() {
     var self = this;
     chrome.extension.onMessage.addListener(
       function(request, sender, sendResponse) {
-        if (request.call === 'user.uid') {
-          sendResponse( self.user.get('uid') );
+        switch( request.call ) {
+          case "user.uid":
+            sendResponse( self.user.get('uid') );
+            break;
+          case "set_badge_text":
+            console.log( sender );
+            chrome.browserAction.setBadgeText({ text: request.args[0].toString(), tabId: sender.tab.id })
+            break;
+          default:
+            throw "not so much bad message dude.";
         }
     });
   };

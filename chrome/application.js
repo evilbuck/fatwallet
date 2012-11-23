@@ -35,7 +35,7 @@
     this.get_uid();
     
     // check if we've shown this recently
-    if ( this.stand_down() ) return this;
+    //if ( this.stand_down() ) return this;
 
     // TODO: abstract this functionality
     // check the host against fatwallet
@@ -45,6 +45,9 @@
       success: function(data, textStatus, jqXHR) {
         // don't do anything if no results are returned
         if ( !data.length ) return;
+        
+        // TODO: set badge text
+        self.set_badge_text( data.length );
 
         $(data).each(function( index ){
           var item = this;
@@ -63,6 +66,12 @@
       dataType: 'json'
     });
 
+  };
+
+  App.prototype.set_badge_text = function(text) {
+    chrome.extension.sendMessage({ call: 'set_badge_text', args: [ text ] }, function(response) {
+      
+    });
   };
 
   App.prototype.toggle_deals = function() {

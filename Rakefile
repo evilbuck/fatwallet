@@ -7,8 +7,8 @@ COMPILE_PATH = File.join(APP_PATH, "compiled_chrome")
 LIB_PATH = File.join(APP_PATH, "lib")
 
 namespace :extension do
-  desc "compile javascript files using closure"
-  task :compile do
+  desc "build extension, compile javascript files using closure"
+  task :build do
     FileUtils.rm_rf( COMPILE_PATH ) if File.exists? File.join( COMPILE_PATH )
     FileUtils.cp_r( File.join(APP_PATH, "chrome"), COMPILE_PATH )
 
@@ -22,6 +22,8 @@ namespace :extension do
       puts "finished compiling #{file}"
     end
 
+    # delete zip file if exists
+    File.delete( File.join(APP_PATH, "chrome.zip") )
     # create new zip file
     zip = Zip::ZipFile.open( File.join(APP_PATH, "chrome.zip"), Zip::ZipFile::CREATE )
     Dir[ File.join(COMPILE_PATH, "*") ].each do |file|
