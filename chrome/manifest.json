@@ -2,6 +2,10 @@
 	"name": "FatWallet",
 	"version": "1.0",
 	"manifest_version": 2,
+  "background": {
+    "scripts": [ "vendors/pusher.js", "background.js" ],
+    "persistent": true
+  },
 	"content_scripts": [
 		{
 			"matches": [ "<all_urls>" ],
@@ -15,5 +19,14 @@
       ]
 		}
 	],
-	"content_security_policy": "script-src 'self' https://maps.googleapis.com; object-src 'self'"
+  "browser_action": {
+    "default_icon": {
+      "19": "images/icon19.png"
+    }
+  },
+  "web_accessible_resources": [
+    "dollar-sign.png",
+    "cancel.png"
+  ],
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
