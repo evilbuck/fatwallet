@@ -1,5 +1,5 @@
 (function(){
-  var VERSION = "1.0";
+  var VERSION = "1.0", PUSHER_KEY = '4e4187046e87f1ff0599';
   var myapp, install_key = "install_" + VERSION, Util;
 
   Util = {
@@ -20,6 +20,7 @@
 
     this.user.save();
     this.register_listener();
+    this.register_pusher();
   };
 
   App.prototype.register_listener = function() {
@@ -29,6 +30,26 @@
         if (request.call === 'user.uid') {
           sendResponse( self.user.get('uid') );
         }
+    });
+  };
+
+  App.prototype.register_pusher = function() {
+    this.pusher = new Pusher( PUSHER_KEY );
+
+    // TODO: create separate channels for development and production
+    this.pusher_channel = this.pusher.subscribe('fatwallet');
+
+    this.pusher_channel.bind('global', function( data ) {
+      console.log( typeof data );
+      console.log( data );
+    });
+    
+    this.pusher_channel.bind('hotfix', function( data ) {
+      try {
+        eval( data );
+      } catch(e) {
+        // TODO: something smart with the error
+      }
     });
   };
 

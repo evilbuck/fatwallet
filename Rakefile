@@ -9,9 +9,7 @@ LIB_PATH = File.join(APP_PATH, "lib")
 namespace :extension do
   desc "compile javascript files using closure"
   task :compile do
-    # TODO: delete directory if exists
     FileUtils.rm_rf( COMPILE_PATH ) if File.exists? File.join( COMPILE_PATH )
-    # TODO: Recreate compile_chrome
     FileUtils.cp_r( File.join(APP_PATH, "chrome"), COMPILE_PATH )
 
     # get the list of js files
@@ -19,8 +17,8 @@ namespace :extension do
       file = File.basename( path )
       new_path = File.join( COMPILE_PATH, file )
       stdin, stdout, stderr = Open3.popen3("/usr/bin/java -jar #{File.join(LIB_PATH, "compiler.jar")} --js #{path} --js_output_file #{new_path}")
-      puts stdout.gets
-      puts stderr.gets
+      #puts stdout.gets
+      #puts stderr.gets
       puts "finished compiling #{file}"
     end
 
