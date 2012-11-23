@@ -15,17 +15,17 @@
         '<div class="deals"/>' +
       '</div>'
     );
-    $deals = $toolbar.find('.deals');
+    this.$deals = $toolbar.find('.deals');
     $logo =  $toolbar.find('.icon-logo');
     $logo.width(140);
     $close_btn = $toolbar.find('.close-button');
-    $toolbar.hide();
+    $toolbar.css('opacity', 0);
 
     $logo.click(function(){
       if ( self.$('.deals .deal').size() === 1 ) {
         return self.$('.deals .deal').click();
       }
-      self.toggle_deals();
+      //self.toggle_deals();
     });
 
     $close_btn.click(function(){
@@ -33,50 +33,46 @@
     });
    
     this.get_uid();
-    
-    // check if we've shown this recently
-    //if ( this.stand_down() ) return this;
-
-    // TODO: abstract this functionality
-    // check the host against fatwallet
-    $.ajax({
-      url: "http://www.fatwallet.com/query/autocomplete_store_category.php",
-      data: { q: window.location.host.replace(/^www\.(.+?)\..{2,4}$/, '$1') },
-      success: function(data, textStatus, jqXHR) {
-        // don't do anything if no results are returned
-        if ( !data.length ) return;
-        
-        // TODO: set badge text
-        self.set_badge_text( data.length );
-
-        $(data).each(function( index ){
-          var item = this;
-          $('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
-             this.v + '</div>')
-            .click(function(){
-            location.href = "http://fatwallet.com/" + item.u;
-          }).appendTo( $deals );
-        });
-
-        $('body').append( $toolbar );
-        $toolbar.fadeIn( 300 );
-
-        self.record_shown();
-      },
-      dataType: 'json'
-    });
+    this.register_listener();
 
   };
 
-  App.prototype.set_badge_text = function(text) {
-    chrome.extension.sendMessage({ call: 'set_badge_text', args: [ text ] }, function(response) {
-      
+  App.prototype.register_listener = function() {
+    var self = this;
+    chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
+      switch( request.call ) {
+        case "toggle_deals":
+          self.toggle_deals();
+          break;
+
+        case "build_deals":
+          $(request.data).each(function( index ){
+            var item = this;
+            $('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
+               this.v + '</div>')
+              .click(function(){
+              location.href = "http://fatwallet.com/" + item.u;
+            }).appendTo( self.$deals );
+          });
+
+          $('body').append( self.$toolbar );
+
+          if ( self.stand_down() ) {
+            self.$toolbar.css( 'opacity', 1 );
+            self.record_shown();
+          }
+
+          break;
+
+        default:
+          throw "unknown request"
+      }
+
     });
   };
 
   App.prototype.toggle_deals = function() {
-    this.$('.deals').toggle();
-    //this.$('.deals').show().css({ height: 'auto' });
+    parseInt(this.$().css('opacity'), 10) < .5 ? this.$().css({ opacity: 1 }) : this.$().css('opacity', 0);
   };
 
   App.prototype.record_shown = function() {
@@ -92,6 +88,7 @@
   };
 
   App.prototype.destroy = function(){
+    return this.toggle_deals();
     this.$().fadeOut(250, function(){
       self.$().remove();
     });
@@ -109,8 +106,9 @@
     });
   };
 
+  new App();
   $(function(){
-    var fatwalletApp = new App();
+    //var fatwalletApp = new App();
     //if (ENVIRONMENT === 'development') global.fatwalletApp = fatwalletApp;
   });
 }).call(this);

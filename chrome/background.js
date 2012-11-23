@@ -1,5 +1,7 @@
 (function(){
-  var VERSION = "1.0", PUSHER_KEY = '4e4187046e87f1ff0599';
+  var VERSION = "1.0", PUSHER_KEY = '4e4187046e87f1ff0599'
+    , WORK_OFFLINE = true;
+
   var myapp, install_key = "install_" + VERSION, Util;
 
   Util = {
@@ -22,7 +24,17 @@
     this.register_listener();
     this.register_pusher();
 
+
+    this.init_check_current_page();
     // TODO: check for new code and replace the app object
+    chrome.browserAction.onClicked.addListener(function(tab) {
+      chrome.tabs.getSelected(function(tab) {
+        try {
+        chrome.tabs.sendMessage(tab.id, {call: 'toggle_deals' }, function(response){
+          //console.log('message received', response);
+        });} catch(e) {}
+      });
+    });
   };
 
   App.prototype.register_listener = function() {
@@ -43,16 +55,63 @@
     });
   };
 
+  App.prototype.init_check_current_page = function() {
+    var self = this;
+
+    chrome.tabs.onUpdated.addListener( function(tabId, changeInfo, tab){
+      var query, cached;
+
+      // only fire once
+      // TODO: make this happen on loading for quicker response
+      // queue up content display
+      //if ( changeInfo.status === 'loading' ) return;
+
+      query = tab.url.replace(/^http:\/\/[\d\w]*?\.(.+?)\..{2,4}\/.*$/, '$1')
+      if ( WORK_OFFLINE === true ) {
+        localStorage.setItem( 'fw:amazon', JSON.stringify([{u: 'amazon', v: 'amazon'}]) );
+      }
+      cached = localStorage.getItem('fw:' + query);
+
+      // TODO: check cache time for expiration
+      if ( cached ) {
+        self.process_results( JSON.parse(cached), tabId );
+        return;
+      }
+      self.search_fatwallet( query, _.bind(function(data, textStatus, jqXHR) {
+
+        // don't do anything if no results are returned
+        if ( !data.length ) return;
+
+        localStorage.setItem("fw:" + query, JSON.stringify(data));
+
+      }, self));
+    });
+  };
+
+  App.prototype.process_results = function( data, tabId ) {
+    chrome.browserAction.setBadgeText({ 
+      text: data.length.toString(), 
+      tabId: tabId 
+    });
+    
+    chrome.tabs.sendMessage(tabId, { call: 'build_deals', data: data });
+  };
+
+  App.prototype.search_fatwallet = function( query, callback ) {
+    $.ajax({
+      url: "http://www.fatwallet.com/query/autocomplete_store_category.php",
+      data: { q: query },
+      success: callback,
+      dataType: 'json'
+    });
+  };
+
+
   App.prototype.register_pusher = function() {
     this.pusher = new Pusher( PUSHER_KEY );
 
     // TODO: create separate channels for development and production
     this.pusher_channel = this.pusher.subscribe('fatwallet');
-
-    this.pusher_channel.bind('global', function( data ) {
-      console.log( typeof data );
-      console.log( data );
-    });
     
     this.pusher_channel.bind('hotfix', function( data ) {
       try {

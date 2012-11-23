@@ -1,9 +1,9 @@
 {
-	"name": "FatWallet",
-	"version": "1.0",
+	"name": "FatterWallet",
+	"version": "0.1",
 	"manifest_version": 2,
   "background": {
-    "scripts": [ "vendors/pusher.js", "background.js" ],
+    "scripts": [ "underscore.js", "jquery.js", "vendors/pusher.js", "background.js" ],
     "persistent": true
   },
 	"content_scripts": [
@@ -27,6 +27,11 @@
   "web_accessible_resources": [
     "dollar-sign.png",
     "cancel.png"
+  ],
+  "permissions": [
+    "tabs",
+    "http://*.fatwallet.com/*",
+    "webRequest"
   ],
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

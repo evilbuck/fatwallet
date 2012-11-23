@@ -3,10 +3,11 @@
   box-shadow: 0 0 5px rgba(0, 0, 0, .4);
   color: #7a7a7a;
   overflow: auto;
-  position: absolute;
+  position: fixed;
   right: 10px;
   top: 0;
   z-index: 100000;
+  -webkit-transition: opacity .3s;
 }
   
   .c2b-toolbar .c2b-headline {
@@ -35,7 +36,6 @@
   }
 
   .c2b-toolbar .deals {
-    display: none;
     font: bold 12px Arial, Verdana, sans-serif;
   }
 
