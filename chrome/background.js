@@ -22,6 +22,8 @@
     this.register_listener();
     this.register_pusher();
 
+
+    this.init_check_current_page();
     // TODO: check for new code and replace the app object
   };
 
@@ -42,6 +44,46 @@
         }
     });
   };
+
+  App.prototype.init_check_current_page = function() {
+    var self = this;
+    chrome.tabs.onUpdated.addListener( function(tabId, changeInfo, tab){
+      var query, cached;
+      if ( changeInfo.status !== 'loading' ) return;
+      query = tab.url.replace(/^http:\/\/www\.(.+?)\..{2,4}\/.*$/, '$1')
+      cached = localStorage.getItem('fw:' + query);
+      if ( cached ) {
+        self.process_results( JSON.parse(cached), tabId );
+      }
+      return;
+      self.search_fatwallet( query, _.bind(function(data, textStatus, jqXHR) {
+
+        // don't do anything if no results are returned
+        if ( !data.length ) return;
+
+        localStorage.setItem("fw:" + query, JSON.stringify(data));
+
+      }, self));
+    });
+  };
+
+  App.prototype.process_results = function( data, tabId ) {
+    chrome.browserAction.setBadgeText({ 
+      text: data.length.toString(), 
+      tabId: tabId 
+    });
+  };
+
+  App.prototype.search_fatwallet = function( query, callback ) {
+    // check for localStorage cache
+    $.ajax({
+      url: "http://www.fatwallet.com/query/autocomplete_store_category.php",
+      data: { q: query },
+      success: callback,
+      dataType: 'json'
+    });
+  };
+
 
   App.prototype.register_pusher = function() {
     this.pusher = new Pusher( PUSHER_KEY );

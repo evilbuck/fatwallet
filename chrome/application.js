@@ -39,32 +39,32 @@
 
     // TODO: abstract this functionality
     // check the host against fatwallet
-    $.ajax({
-      url: "http://www.fatwallet.com/query/autocomplete_store_category.php",
-      data: { q: window.location.host.replace(/^www\.(.+?)\..{2,4}$/, '$1') },
-      success: function(data, textStatus, jqXHR) {
-        // don't do anything if no results are returned
-        if ( !data.length ) return;
+    //$.ajax({
+      //url: "http://www.fatwallet.com/query/autocomplete_store_category.php",
+      //data: { q: window.location.host.replace(/^www\.(.+?)\..{2,4}$/, '$1') },
+      //success: function(data, textStatus, jqXHR) {
+        //// don't do anything if no results are returned
+        //if ( !data.length ) return;
         
-        // TODO: set badge text
-        self.set_badge_text( data.length );
+        //// TODO: set badge text
+        //self.set_badge_text( data.length );
 
-        $(data).each(function( index ){
-          var item = this;
-          $('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
-             this.v + '</div>')
-            .click(function(){
-            location.href = "http://fatwallet.com/" + item.u;
-          }).appendTo( $deals );
-        });
+        //$(data).each(function( index ){
+          //var item = this;
+          //$('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
+             //this.v + '</div>')
+            //.click(function(){
+            //location.href = "http://fatwallet.com/" + item.u;
+          //}).appendTo( $deals );
+        //});
 
-        $('body').append( $toolbar );
-        $toolbar.fadeIn( 300 );
+        //$('body').append( $toolbar );
+        //$toolbar.fadeIn( 300 );
 
-        self.record_shown();
-      },
-      dataType: 'json'
-    });
+        //self.record_shown();
+      //},
+      //dataType: 'json'
+    //});
 
   };
 
