@@ -52,6 +52,8 @@
       if ( changeInfo.status !== 'loading' ) return;
       query = tab.url.replace(/^http:\/\/www\.(.+?)\..{2,4}\/.*$/, '$1')
       cached = localStorage.getItem('fw:' + query);
+
+      // TODO: check cache time for expiration
       if ( cached ) {
         self.process_results( JSON.parse(cached), tabId );
       }
