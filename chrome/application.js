@@ -15,7 +15,7 @@
         '<div class="deals"/>' +
       '</div>'
     );
-    $deals = $toolbar.find('.deals');
+    this.$deals = $toolbar.find('.deals');
     $logo =  $toolbar.find('.icon-logo');
     $logo.width(140);
     $close_btn = $toolbar.find('.close-button');
@@ -33,7 +33,25 @@
     });
    
     this.get_uid();
+    this.register_listener();
 
+  };
+
+  App.prototype.register_listener = function() {
+    var self = this;
+    chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
+    $(request).each(function( index ){
+        var item = this;
+        $('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
+           this.v + '</div>')
+          .click(function(){
+          location.href = "http://fatwallet.com/" + item.u;
+        }).appendTo( self.$deals );
+      });
+
+      $('body').append( self.$toolbar );
+      self.$toolbar.fadeIn( 300 );
+    });
   };
 
   App.prototype.set_badge_text = function(text) {
@@ -77,8 +95,9 @@
     });
   };
 
+  new App();
   $(function(){
-    var fatwalletApp = new App();
+    //var fatwalletApp = new App();
     //if (ENVIRONMENT === 'development') global.fatwalletApp = fatwalletApp;
   });
 }).call(this);

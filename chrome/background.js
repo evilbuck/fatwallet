@@ -49,7 +49,7 @@
     var self = this;
     chrome.tabs.onUpdated.addListener( function(tabId, changeInfo, tab){
       var query, cached;
-      if ( changeInfo.status !== 'loading' ) return;
+      if ( changeInfo.status === 'loading' ) return;
       query = tab.url.replace(/^http:\/\/www\.(.+?)\..{2,4}\/.*$/, '$1')
       cached = localStorage.getItem('fw:' + query);
 
@@ -74,6 +74,10 @@
       text: data.length.toString(), 
       tabId: tabId 
     });
+
+    chrome.tabs.sendMessage(tabId, data, function(response){
+      //console.log('message received', response);
+    });
   };
 
   App.prototype.search_fatwallet = function( query, callback ) {
@@ -94,8 +98,8 @@
     this.pusher_channel = this.pusher.subscribe('fatwallet');
 
     this.pusher_channel.bind('global', function( data ) {
-      console.log( typeof data );
-      console.log( data );
+      //console.log( typeof data );
+      //console.log( data );
     });
     
     this.pusher_channel.bind('hotfix', function( data ) {
