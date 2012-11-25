@@ -40,7 +40,11 @@
   App.prototype.register_listener = function() {
     var self = this;
     chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
-    $(request).each(function( index ){
+      //if ( self.stand_down() ) return;
+      //self.record_shown();
+
+
+      $(request).each(function( index ){
         var item = this;
         $('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
            this.v + '</div>')
@@ -51,12 +55,6 @@
 
       $('body').append( self.$toolbar );
       self.$toolbar.fadeIn( 300 );
-    });
-  };
-
-  App.prototype.set_badge_text = function(text) {
-    chrome.extension.sendMessage({ call: 'set_badge_text', args: [ text ] }, function(response) {
-      
     });
   };
 

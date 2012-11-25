@@ -49,15 +49,20 @@
     var self = this;
     chrome.tabs.onUpdated.addListener( function(tabId, changeInfo, tab){
       var query, cached;
-      if ( changeInfo.status === 'loading' ) return;
+
+      // only fire once
+      // TODO: make this happen on loading for quicker response
+      // queue up content display
+      //if ( changeInfo.status === 'loading' ) return;
+
       query = tab.url.replace(/^http:\/\/www\.(.+?)\..{2,4}\/.*$/, '$1')
       cached = localStorage.getItem('fw:' + query);
 
       // TODO: check cache time for expiration
       if ( cached ) {
         self.process_results( JSON.parse(cached), tabId );
+        return;
       }
-      return;
       self.search_fatwallet( query, _.bind(function(data, textStatus, jqXHR) {
 
         // don't do anything if no results are returned
@@ -75,9 +80,12 @@
       tabId: tabId 
     });
 
-    chrome.tabs.sendMessage(tabId, data, function(response){
-      //console.log('message received', response);
+    chrome.browserAction.onClicked.addListener(function(tab) {
+      chrome.tabs.sendMessage(tabId, data, function(response){
+        //console.log('message received', response);
+      });
     });
+
   };
 
   App.prototype.search_fatwallet = function( query, callback ) {
