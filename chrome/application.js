@@ -25,7 +25,7 @@
       if ( self.$('.deals .deal').size() === 1 ) {
         return self.$('.deals .deal').click();
       }
-      self.toggle_deals();
+      //self.toggle_deals();
     });
 
     $close_btn.click(function(){
@@ -71,8 +71,8 @@
   };
 
   App.prototype.toggle_deals = function() {
-    this.$('.deals').toggle();
-    //this.$('.deals').show().css({ height: 'auto' });
+    this.$().toggle();
+    //this.$('.deals').toggle();
   };
 
   App.prototype.record_shown = function() {
@@ -88,6 +88,7 @@
   };
 
   App.prototype.destroy = function(){
+    return this.toggle_deals();
     this.$().fadeOut(250, function(){
       self.$().remove();
     });

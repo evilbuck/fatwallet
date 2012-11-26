@@ -26,8 +26,10 @@
     this.init_check_current_page();
     // TODO: check for new code and replace the app object
     chrome.browserAction.onClicked.addListener(function(tab) {
-      chrome.tabs.sendMessage(tabId, {call: 'toggle_deals' }, function(response){
-        //console.log('message received', response);
+      chrome.tabs.getSelected(function(tab) {
+        chrome.tabs.sendMessage(tab.id, {call: 'toggle_deals' }, function(response){
+          //console.log('message received', response);
+        });
       });
     });
   };
@@ -84,8 +86,8 @@
       text: data.length.toString(), 
       tabId: tabId 
     });
-
-
+    
+    chrome.tabs.sendMessage(tabId, { call: 'build_deals' });
   };
 
   App.prototype.search_fatwallet = function( query, callback ) {
