@@ -42,19 +42,31 @@
     chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
       //if ( self.stand_down() ) return;
       //self.record_shown();
+      
+      switch( request.call ) {
+        case "toggle_deals":
+          self.toggle_deals();
+          break;
 
+        case "build_deals":
+          $(request.data).each(function( index ){
+            var item = this;
+            $('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
+               this.v + '</div>')
+              .click(function(){
+              location.href = "http://fatwallet.com/" + item.u;
+            }).appendTo( self.$deals );
+          });
 
-      $(request).each(function( index ){
-        var item = this;
-        $('<div class="deal ' + (index % 2 ? 'alt' : '' ) + '">' + 
-           this.v + '</div>')
-          .click(function(){
-          location.href = "http://fatwallet.com/" + item.u;
-        }).appendTo( self.$deals );
-      });
+          $('body').append( self.$toolbar );
+          self.$toolbar.fadeIn( 300 );
 
-      $('body').append( self.$toolbar );
-      self.$toolbar.fadeIn( 300 );
+          break;
+
+        default:
+          throw "unknown request"
+      }
+
     });
   };
 

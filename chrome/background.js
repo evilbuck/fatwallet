@@ -25,6 +25,11 @@
 
     this.init_check_current_page();
     // TODO: check for new code and replace the app object
+    chrome.browserAction.onClicked.addListener(function(tab) {
+      chrome.tabs.sendMessage(tabId, {call: 'toggle_deals' }, function(response){
+        //console.log('message received', response);
+      });
+    });
   };
 
   App.prototype.register_listener = function() {
@@ -80,11 +85,6 @@
       tabId: tabId 
     });
 
-    chrome.browserAction.onClicked.addListener(function(tab) {
-      chrome.tabs.sendMessage(tabId, data, function(response){
-        //console.log('message received', response);
-      });
-    });
 
   };
 
