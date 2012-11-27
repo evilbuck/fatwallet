@@ -29,9 +29,10 @@
     // TODO: check for new code and replace the app object
     chrome.browserAction.onClicked.addListener(function(tab) {
       chrome.tabs.getSelected(function(tab) {
+        try {
         chrome.tabs.sendMessage(tab.id, {call: 'toggle_deals' }, function(response){
           //console.log('message received', response);
-        });
+        });} catch(e) {}
       });
     });
   };
