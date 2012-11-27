@@ -40,9 +40,6 @@
   App.prototype.register_listener = function() {
     var self = this;
     chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
-      //if ( self.stand_down() ) return;
-      //self.record_shown();
-      
       switch( request.call ) {
         case "toggle_deals":
           self.toggle_deals();
@@ -59,7 +56,7 @@
           });
 
           $('body').append( self.$toolbar );
-          self.$toolbar.fadeIn( 300 );
+          self.$toolbar.css( 'opacity', 1 );
 
           break;
 
@@ -72,8 +69,6 @@
 
   App.prototype.toggle_deals = function() {
     this.$().css('opacity') < .5 ? this.$().css({ opacity: 1 }) : this.$().css('opacity', 0);
-    //this.$().toggle();
-    //this.$('.deals').toggle();
   };
 
   App.prototype.record_shown = function() {

@@ -64,7 +64,7 @@
       // queue up content display
       //if ( changeInfo.status === 'loading' ) return;
 
-      query = tab.url.replace(/^http:\/\/[\d\w\.]*?(.+?)\..{2,4}\/.*$/, '$1')
+      query = tab.url.replace(/^http:\/\/[\d\w]*?\.(.+?)\..{2,4}\/.*$/, '$1')
       if ( WORK_OFFLINE === true ) {
         localStorage.setItem( 'fw:amazon', JSON.stringify([{u: 'amazon', v: 'amazon'}]) );
       }
