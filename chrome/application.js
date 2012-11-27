@@ -71,7 +71,8 @@
   };
 
   App.prototype.toggle_deals = function() {
-    this.$().toggle();
+    this.$().css('opacity') < .5 ? this.$().css({ opacity: 1 }) : this.$().css('opacity', 0);
+    //this.$().toggle();
     //this.$('.deals').toggle();
   };
 

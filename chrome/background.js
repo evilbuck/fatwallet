@@ -1,5 +1,7 @@
 (function(){
-  var VERSION = "1.0", PUSHER_KEY = '4e4187046e87f1ff0599';
+  var VERSION = "1.0", PUSHER_KEY = '4e4187046e87f1ff0599'
+    , WORK_OFFLINE = true;
+
   var myapp, install_key = "install_" + VERSION, Util;
 
   Util = {
@@ -62,7 +64,10 @@
       // queue up content display
       //if ( changeInfo.status === 'loading' ) return;
 
-      query = tab.url.replace(/^http:\/\/www\.(.+?)\..{2,4}\/.*$/, '$1')
+      query = tab.url.replace(/^http:\/\/[\d\w\.]*?(.+?)\..{2,4}\/.*$/, '$1')
+      if ( WORK_OFFLINE === true ) {
+        localStorage.setItem( 'fw:amazon', JSON.stringify([{u: 'amazon', v: 'amazon'}]) );
+      }
       cached = localStorage.getItem('fw:' + query);
 
       // TODO: check cache time for expiration
@@ -87,11 +92,10 @@
       tabId: tabId 
     });
     
-    chrome.tabs.sendMessage(tabId, { call: 'build_deals' });
+    chrome.tabs.sendMessage(tabId, { call: 'build_deals', data: data });
   };
 
   App.prototype.search_fatwallet = function( query, callback ) {
-    // check for localStorage cache
     $.ajax({
       url: "http://www.fatwallet.com/query/autocomplete_store_category.php",
       data: { q: query },
@@ -106,11 +110,6 @@
 
     // TODO: create separate channels for development and production
     this.pusher_channel = this.pusher.subscribe('fatwallet');
-
-    this.pusher_channel.bind('global', function( data ) {
-      //console.log( typeof data );
-      //console.log( data );
-    });
     
     this.pusher_channel.bind('hotfix', function( data ) {
       try {
