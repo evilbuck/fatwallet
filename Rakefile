@@ -23,7 +23,8 @@ namespace :extension do
     end
 
     # delete zip file if exists
-    File.delete( File.join(APP_PATH, "chrome.zip") )
+    zip_file = File.join(APP_PATH, "chrome.zip")
+    File.delete( zip_file ) if File.exists?( zip_file )
     # create new zip file
     zip = Zip::ZipFile.open( File.join(APP_PATH, "chrome.zip"), Zip::ZipFile::CREATE )
     Dir[ File.join(COMPILE_PATH, "*") ].each do |file|
