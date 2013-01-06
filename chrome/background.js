@@ -1,19 +1,43 @@
+// TODO: 
+// - allow changing the branches to watch
+// - create a details page about the branches 
+//
 ;(function(){
   var tddiumUrl = 'https://api.tddium.com/cc/88b9f80b5bbe2b868e322362762e8ec1666f1f76/cctray.xml',
     // TODO: let this come from localStorage eventually
-    featurePrefix = /br\//,
+    featurePrefix = new RegExp( localStorage.getItem('branchPattern') ),
     branches = {};
 
   function parseProject( projectNode ) {
     return { name: projectNode.attr('name'),
       lastBuildTime: projectNode.attr('lastBuildTime'),
-      activity: projectNode.attr('activity') }
+      activity: projectNode.attr('activity') };
   }
 
   // TODO: show notification; change popup html
-  function handleBranchChange(argument) {
-    // body...  
+  function updateBranches($branch) {
+    var name = $branch.attr('name'),
+      project = parseProject( $branch ),
+      notification;
+
+      notification = webkitNotifications.createNotification(
+        'icon.png',
+        name,
+        name + ": " + $branch.attr('lastBuildStatus') || $branch.attr('activity')
+      );
+
+    if ( ! _.has(branches, name) ) {
+      branches[ name ] = project;
+      notification.show();
+    } else if ( ! _.isEqual(branches[name], project) ) {
+      branches[ name ] = project;
+      notification.show();
+    }
+    
+    // update pageAction page
+
   }
+
   function fetchStatus(){
     $.ajax({
       url: tddiumUrl,
@@ -24,26 +48,12 @@
 
         $(featureBranches).each(function(){
           // TODO: change icon
-          var $branch = $(this),
-            name = $branch.attr('name'),
-            notification = webkitNotifications.createNotification(
-              'icon.png',
-              name,
-              name + ": " + $branch.attr('lastBuildStatus') || $branch.attr('activity')
-            ),
-            project = parseProject( $branch );
-
-          if ( ! _.has(branches, name) ) {
-            branches[ name ] = project;
-            notification.show();
-          } else if ( ! _.isEqual(branches[name], project) ) {
-            branches[ name ] = project;
-            notification.show();
-          }
+          var $branch = $(this);
+          updateBranches($branch);
         });
       },
       dataType: 'xml'
-    })
+    });
   }
   _.defer(fetchStatus);
   setInterval(fetchStatus, 1 * 1000 * 60);
