@@ -25,7 +25,7 @@
 
       notification = webkitNotifications.createNotification(
         '/images/fire.png',
-        name,
+        $branch.attr('lastBuildStatus') || name,
         name + ": " + $branch.attr('lastBuildStatus') || $branch.attr('activity')
       );
 
@@ -38,6 +38,7 @@
     }
     
     // update pageAction page
+    // TODO: look into a better way to pass the data to the browserAction page
     localStorage.setItem('branches', JSON.stringify(branches));
   }
 

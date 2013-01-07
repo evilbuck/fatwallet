@@ -3,6 +3,7 @@ $(function(){
   var $messages = $('<ul></ul>');
   $('.messages').html('').append($messages);
 
+  // TODO: sort based on date
   for(branchName in branches) {
     var branch = branches[ branchName ],
       className;
@@ -17,7 +18,6 @@ $(function(){
       default:
         className = '';
     }
-
     $messages.append('<li class="' + className + '">' + branch.lastBuildTime + ' ' +
                      branch.name.replace(/Oceans/, '') + ': ' + (branch.lastBuildStatus || '') + '</li>')
       .click((function(url){
