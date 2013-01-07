@@ -21,7 +21,9 @@
   function parseProject( projectNode ) {
     return { name: projectNode.attr('name'),
       lastBuildTime: projectNode.attr('lastBuildTime'),
-      activity: projectNode.attr('activity') };
+      activity: projectNode.attr('activity'),
+      webUrl: projectNode.attr('webUrl'),
+      lastBuildStatus: projectNode.attr('lastBuildStatus') };
   }
 
   // TODO: show notification; change popup html
@@ -38,21 +40,23 @@
 
     if ( ! _.has(branches, name) ) {
       branches[ name ] = project;
-      project.$el = $('<li>' + project.name + '</li>');
-      $statusTemplate.find('ul').append( project.$el );
+      //project.$el = $('<li>' + project.name + '</li>');
+      //$statusTemplate.find('ul').append( project.$el );
       notification.show();
     } else if ( ! _.isEqual(branches[name], project) ) {
       branches[ name ] = project;
-      project.$el.text( project.name );
+      //project.$el.text( project.name );
       notification.show();
     }
     
     // update pageAction page
+    localStorage.setItem('branches', JSON.stringify(branches));
   }
 
   function fetchStatus(){
     $.ajax({
       url: tddiumUrl,
+      cache: false,
       success: function(res) {
         var featureBranches = $(res).find('Project').map(function(item) {
           if ( featurePrefix.test( $(this).attr('name') ) ) { return this; }
@@ -63,6 +67,7 @@
           var $branch = $(this);
           updateBranches($branch);
         });
+        chrome.browserAction.setPopup({popup: 'browser_action.html'});
       },
       dataType: 'xml'
     });

@@ -1,0 +1,11 @@
+body {
+  
+}
+
+.messages li {
+  white-space: nowrap;
+}
+
+.container {
+  width: 300px;
+}
