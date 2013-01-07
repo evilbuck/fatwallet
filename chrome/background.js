@@ -39,6 +39,7 @@
     
     // update pageAction page
     // TODO: look into a better way to pass the data to the browserAction page
+    
     localStorage.setItem('branches', JSON.stringify(branches));
   }
 

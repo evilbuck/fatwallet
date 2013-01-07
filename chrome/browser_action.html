@@ -3,13 +3,12 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   
   <title>Tddium Status</title>
+  <link rel="stylesheet" href="vendors/bootstrap/css/bootstrap.css" title="" type="text/css" />
   <style type="text/css">
-    * {
-      padding: 0;
-      margin: 0;
-      border: 0;
-    }
 
+    .messages ul {
+      margin-left: 0;
+    }
 
     .messages li {
       list-style: none;
@@ -19,12 +18,16 @@
       cursor: pointer;
     }
 
-    .messages li.failure {
+    .messages li.important {
       background: #ffd1d1;
     }
 
     .messages li.success {
       background: #d1ffcc;
+    }
+
+    .messages .label {
+      margin-right: 4px;
     }
   </style>
   <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
@@ -32,7 +35,7 @@
   <script src="browser_action.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
-  <div class="container">
+  <div class="wrapper">
     <div class="messages">
       
     </div>
