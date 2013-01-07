@@ -7,16 +7,7 @@
   var tddiumUrl = 'https://api.tddium.com/cc/88b9f80b5bbe2b868e322362762e8ec1666f1f76/cctray.xml',
     // TODO: let this come from localStorage eventually
     featurePrefix = new RegExp( localStorage.getItem('branchPattern') ),
-    branches = {},
-    $statusTemplate;
-
-
-  $statusTemplate = $('<html>' +
-      '<body>' +
-        '<ul>' +
-        '</ul>' +
-      '</body>' +
-    '</html>');
+    branches = {};
 
   function parseProject( projectNode ) {
     return { name: projectNode.attr('name'),
@@ -33,19 +24,16 @@
       notification;
 
       notification = webkitNotifications.createNotification(
-        'icon.png',
+        '/images/fire.png',
         name,
         name + ": " + $branch.attr('lastBuildStatus') || $branch.attr('activity')
       );
 
     if ( ! _.has(branches, name) ) {
       branches[ name ] = project;
-      //project.$el = $('<li>' + project.name + '</li>');
-      //$statusTemplate.find('ul').append( project.$el );
       notification.show();
-    } else if ( ! _.isEqual(branches[name], project) ) {
+    } else if ( new Date(branches[name].lastBuildTime) < new Date(project.lastBuildTime)) {
       branches[ name ] = project;
-      //project.$el.text( project.name );
       notification.show();
     }
     

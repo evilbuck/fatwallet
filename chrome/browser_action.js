@@ -2,6 +2,7 @@ $(function(){
   var branches = JSON.parse( localStorage.getItem('branches') || '{}' );
   var $messages = $('<ul></ul>');
   $('.messages').html('').append($messages);
+
   for(branchName in branches) {
     var branch = branches[ branchName ],
       className;
@@ -13,8 +14,12 @@ $(function(){
       case "Failure":
         className = 'failure'
         break;
+      default:
+        className = '';
     }
-    $messages.append('<li class="' + className + '">' + branch.name.replace(/Oceans/, '') + ': ' + (branch.lastBuildStatus || '') + '</li>')
+
+    $messages.append('<li class="' + className + '">' + branch.lastBuildTime + ' ' +
+                     branch.name.replace(/Oceans/, '') + ': ' + (branch.lastBuildStatus || '') + '</li>')
       .click((function(url){
         return function(){
           window.open( url );
