@@ -2,11 +2,21 @@
 // - allow changing the branches to watch
 // - create a details page about the branches 
 //
+
 ;(function(){
   var tddiumUrl = 'https://api.tddium.com/cc/88b9f80b5bbe2b868e322362762e8ec1666f1f76/cctray.xml',
     // TODO: let this come from localStorage eventually
     featurePrefix = new RegExp( localStorage.getItem('branchPattern') ),
-    branches = {};
+    branches = {},
+    $statusTemplate;
+
+
+  $statusTemplate = $('<html>' +
+      '<body>' +
+        '<ul>' +
+        '</ul>' +
+      '</body>' +
+    '</html>');
 
   function parseProject( projectNode ) {
     return { name: projectNode.attr('name'),
@@ -28,14 +38,16 @@
 
     if ( ! _.has(branches, name) ) {
       branches[ name ] = project;
+      project.$el = $('<li>' + project.name + '</li>');
+      $statusTemplate.find('ul').append( project.$el );
       notification.show();
     } else if ( ! _.isEqual(branches[name], project) ) {
       branches[ name ] = project;
+      project.$el.text( project.name );
       notification.show();
     }
     
     // update pageAction page
-
   }
 
   function fetchStatus(){
