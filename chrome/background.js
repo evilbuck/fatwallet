@@ -17,14 +17,13 @@
       lastBuildStatus: projectNode.attr('lastBuildStatus') };
   }
 
-  // TODO: show notification; change popup html
   function updateBranches($branch) {
     var name = $branch.attr('name'),
       project = parseProject( $branch ),
       notification;
 
       notification = webkitNotifications.createNotification(
-        '/images/fire.png',
+        'images/fire.png',
         $branch.attr('lastBuildStatus') || name,
         name + ": " + $branch.attr('lastBuildStatus') || $branch.attr('activity')
       );

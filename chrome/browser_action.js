@@ -25,12 +25,12 @@ $(function(){
         className = '';
     }
 
-    label = (className) ? '<span class="label label-' + className + '">' + className + '</span>' : '';
+    label = (className) ? '<span class="label label-' + className + '">' + branch.lastBuildStatus.toLowerCase() + '</span>' : '';
     $messages.append(
       '<li class="' + className + '">' +
       label +
       (branch.lastBuildTime || '') + ' ' +
-      branch.name.replace(/Oceans/, '') + ': ' + (branch.lastBuildStatus || '') + '</li>'
+      branch.name.replace(/[O|o]ceans/, '') + '</li>'
     ).click((function(url){
       return function(){
         window.open( url );
