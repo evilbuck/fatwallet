@@ -12,7 +12,8 @@ $(function(){
 
   for(branchName in branches) {
     var branch = branches[ branchName ],
-      className;
+      className,
+      buildTimeLabel;
     switch(branch.lastBuildStatus) {
       case "Success":
         className = 'success';
@@ -25,11 +26,24 @@ $(function(){
         className = '';
     }
 
+    // format the date a little
+    var now = new Date(),
+      buildTime = new Date(branch.lastBuildTime),
+      longAgoInMillis = now.getTime() - buildTime.getTime();
+
+    buildTimeLabel = Math.floor(longAgoInMillis / 1000 / 60 / 60 / 24) + " days"
+    if ( longAgoInMillis < 1000 * 60 * 60 * 24) {
+      buildTimeLabel = Math.floor(longAgoInMillis / 1000 / 60)  + " hours";
+      if ( longAgoInMillis < 1000 * 60 * 60) {
+        buildTimeLabel = Math.floor(longAgoInMillis / 1000 / 60 / 60) + " minutes";
+      }
+    }
+
     label = (className) ? '<span class="label label-' + className + '">' + branch.lastBuildStatus.toLowerCase() + '</span>' : '';
     $messages.append(
       '<li class="' + className + '">' +
       label +
-      (branch.lastBuildTime || '') + ' ' +
+      buildTimeLabel + ' ago ' +
       branch.name.replace(/[O|o]ceans/, '') + '</li>'
     ).click((function(url){
       return function(){

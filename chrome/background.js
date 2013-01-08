@@ -7,7 +7,14 @@
   var tddiumUrl = 'https://api.tddium.com/cc/88b9f80b5bbe2b868e322362762e8ec1666f1f76/cctray.xml',
     // TODO: let this come from localStorage eventually
     featurePrefix = new RegExp( localStorage.getItem('branchPattern') ),
-    branches = {};
+    branches = {},
+    firstRunKey = 'tddium-notifier:' + chrome.app.getDetails().version;
+  
+  // first run
+  if ( ! localStorage.getItem(firstRunKey) ) {
+    chrome.tabs.create({ url: "options.html" });
+    localStorage.setItem( firstRunKey, true );
+  }
 
   function parseProject( projectNode ) {
     return { name: projectNode.attr('name'),
