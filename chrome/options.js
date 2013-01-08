@@ -1,6 +1,6 @@
 $(function(){
   $('#branch_pattern').val( localStorage.getItem('branchPattern') || '' );
-  $('button').click(function(){
+  $('form').submit(function(){
     var branchPattern = $('#branch_pattern').val().trim();
     localStorage.setItem('branchPattern',  branchPattern);
     // TODO: run the fetchStatus with the new branchPattern
@@ -12,5 +12,7 @@ $(function(){
     setTimeout(function(){
       $('.container .alert:contains(' + branchPattern +')').alert('close');
     }, 3000);
+
+    return false;
   });
 });
