@@ -13,7 +13,8 @@ $(function(){
   for(branchName in branches) {
     var branch = branches[ branchName ],
       className,
-      buildTimeLabel;
+      buildTimeLabel,
+      now, buildTime, longAgoInMillis;
     switch(branch.lastBuildStatus) {
       case "Success":
         className = 'success';
@@ -27,9 +28,9 @@ $(function(){
     }
 
     // format the date a little
-    var now = new Date(),
-      buildTime = new Date(branch.lastBuildTime),
-      longAgoInMillis = now.getTime() - buildTime.getTime();
+    now = new Date();
+    buildTime = new Date(branch.lastBuildTime);
+    longAgoInMillis = now.getTime() - buildTime.getTime();
 
     buildTimeLabel = Math.floor(longAgoInMillis / 1000 / 60 / 60 / 24) + " days"
     if ( longAgoInMillis < 1000 * 60 * 60 * 24) {
@@ -51,5 +52,9 @@ $(function(){
       }
     })(branch.webUrl));
   }
+
+  //$('form').submit(function () {
+    //var query = $('#query').text().trim();
+  //});
 });
 
