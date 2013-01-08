@@ -47,9 +47,15 @@
       url: tddiumUrl,
       cache: false,
       success: function(res) {
+        // TODO: DRY the hell out of this. I have three loops that could be reduced
         var featureBranches = $(res).find('Project').map(function(item) {
           if ( featurePrefix.test( $(this).attr('name') ) ) { return this; }
-        });
+        }),
+          failedCount;
+        
+        failedCount = _.reduce(featureBranches, function(memo, branch) {
+          return ( $(branch).attr('lastBuildStatus') == 'Failure' && ++memo) || 0;
+        }, 0);
 
         $(featureBranches).each(function(){
           // TODO: change icon
@@ -59,10 +65,14 @@
         chrome.browserAction.setPopup({popup: 'browser_action.html'});
 
         // TODO: set a badgeText if the last build failed
+        chrome.browserAction.setBadgeText({ text: (failedCount || '' ).toString() });
+
       },
       dataType: 'xml'
     });
   }
+  this.fetchStatus = fetchStatus;
+
   _.defer(fetchStatus);
   setInterval(fetchStatus, 1 * 1000 * 60);
-})();
+}).call(this);
