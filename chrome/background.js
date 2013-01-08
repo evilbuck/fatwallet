@@ -57,6 +57,8 @@
           updateBranches($branch);
         });
         chrome.browserAction.setPopup({popup: 'browser_action.html'});
+
+        // TODO: set a badgeText if the last build failed
       },
       dataType: 'xml'
     });
