@@ -14,21 +14,41 @@
     padding: '5px 6px'
   });
 
-  // add handler to button
-  $button.on('click.download', function(jqEvent){
+  // this object exists to publish events
+  var $router = $({});
+
+  // subscribe to 
+  $router.on('download:start.button', function(jqEvent) {
+    // disable the downloading
+    //this.off('download:start.button');
+
     $.ajax({
       url: youtuberUrl + '/queue',
       data: { video_url: location.href },
       success: function(res){
-        console.log(res);
-        window.top.location.href = youtuberUrl + "/download/" + encodeURIComponent( res.files[0] );
+        $router.trigger('download:done', [res.files]);
       },
       // handle errors
       error: function(res){
-        console.log(res);
+        alert('Sorry, there was an error downloading this file.');
       },
       dataType: 'json'
     });
+  });
+
+  $router.on('download:done', function(jqEvent, files){
+    $button.find('span').text('done');
+    window.top.location.href = youtuberUrl + "/download/" + encodeURIComponent( files[0] );
+  });
+
+  // add handler to button
+  $button.on('click.download', function(jqEvent){
+    var $this = $(this);
+
+    $this.off('click.download');
+    $this.find('span').text('downloading');
+    
+    $router.trigger('download:start');
   });
   
   $button.appendTo('#watch-headline-title');
