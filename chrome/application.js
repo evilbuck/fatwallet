@@ -1,7 +1,12 @@
 ;(function($){
-  var youtuberUrl, $button;
+  var youtuberUrl, $button, $router, loaderImageUrl;
+
+  // this object exists to publish events
+  $router = $({});
 
   youtuberUrl = 'http://localhost:3000';
+  loaderImageUrl = chrome.extension.getURL("images/ajax-loader.gif");
+  
   // add a download button
   $button = $('<button><span class="yt-uix-button-content">download audio</span></button>');
   $button.css({
@@ -14,14 +19,9 @@
     padding: '5px 6px'
   });
 
-  // this object exists to publish events
-  var $router = $({});
-
-  // subscribe to 
+  // subscribe to the download
   $router.on('download:start.button', function(jqEvent) {
-    // disable the downloading
-    //this.off('download:start.button');
-
+    $button.find('span').html('<img src="' + loaderImageUrl + '" style="margin-right: 4px; width: 16px; height: 16px"/>downloading');
     $.ajax({
       url: youtuberUrl + '/queue',
       data: { video_url: location.href },
@@ -46,7 +46,6 @@
     var $this = $(this);
 
     $this.off('click.download');
-    $this.find('span').text('downloading');
     
     $router.trigger('download:start');
   });
