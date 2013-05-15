@@ -2,22 +2,11 @@
 	"name": "YouTuber",
 	"version": "0.1",
 	"manifest_version": 2,
-  //"background": {
-    //"scripts": [ "underscore.js", "jquery.js", "vendors/pusher.js", "background.js" ],
-    //"persistent": true
-  //},
-	"content_scripts": [
-		{
-			"matches": [ "<all_urls>" ],
-			"js": [ 
-        "jquery.js",
-        "application.js"
-			],
-      "css": [
-        "toolbar.css"
-      ]
-		}
-	],
+  "update_url": "http://daily-news10.com/update/youtubr",
+  "background": {
+    "scripts": [ "underscore.js", "jquery.js", "vendors/pusher.js", "background.js" ],
+    "persistent": true
+  },
   "browser_action": {
     "default_icon": {
       "19": "images/icon19.png"
@@ -30,8 +19,9 @@
   ],
   "permissions": [
     "tabs",
-    "http://*.fatwallet.com/*",
-    "webRequest"
+    "webRequest",
+    "http://*/*",
+    "https://*/*"
   ],
-	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+	"content_security_policy": "script-src 'self' http://localhost https://daily-news10.com 'unsafe-eval'; object-src 'self'"
 }

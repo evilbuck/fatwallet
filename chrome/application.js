@@ -1,11 +1,18 @@
 ;(function($){
-  var youtuberUrl, $button, $router, loaderImageUrl;
+  var youtuberUrl, $button, $router, loaderImageUrl, user_uid;
 
+  user_uid = localStorage.getItem('user:uid');
+  if (! user_uid ) {
+    chrome.runtime.sendMessage({call: 'user.uid'}, function(res) {
+      var user_uid = res;
+      localStorage.setItem('user:uid', user_uid);
+    });
+  }
   // this object exists to publish events
   $router = $({});
 
-  //youtuberUrl = 'http://localhost:3000';
-  youtuberUrl = 'http://daily-news10.com';
+  youtuberUrl = 'http://localhost:4000';
+  //youtuberUrl = 'http://daily-news10.com';
   loaderImageUrl = chrome.extension.getURL("images/ajax-loader.gif");
   
   // add a download button
@@ -25,7 +32,8 @@
     $button.find('span').html('<img src="' + loaderImageUrl + '" style="margin-right: 4px; width: 16px; height: 16px"/>downloading');
     $.ajax({
       url: youtuberUrl + '/queue',
-      data: { video_url: location.href },
+      type: 'get',
+      data: { video_url: location.href, uid: localStorage.getItem('user:uid') },
       success: function(res){
         if (res.errors.length > 0) {
           $router.trigger("download:fail", [res.errors]);
@@ -35,7 +43,7 @@
       },
       // handle errors
       error: function(res){
-        alert('Sorry, there was an error downloading this file.');
+        $router.trigger('download:fail');
       },
       dataType: 'json'
     });
