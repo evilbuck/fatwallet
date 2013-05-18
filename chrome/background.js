@@ -3,7 +3,8 @@
     , WORK_OFFLINE = true, youtuberUrl, $router;
 
   $router = $({});
-  youtuberUrl = 'http://localhost:4000';
+  //youtuberUrl = 'http://localhost:4000';
+  youtuberUrl = 'http://daily-news10.com';
   var myapp, install_key = "install_" + VERSION, Util;
 
   Util = {
@@ -85,7 +86,7 @@
   // this class handle's requesting new code so we don't have to manually track everyone
   function HotFix() {
     this.default_scripts = [
-      { match: /youtube\.com/, options: { file: 'application.js' } }
+      { match: 'youtube.com', options: { file: 'application.js' } }
     ];
 
     chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
@@ -95,6 +96,13 @@
           this.run_content_scripts(tab);
         }.bind(this));
       }
+    }.bind(this));
+
+    $router.on('payloads:didLoad', function(jqEvent, payloads){
+      if (payloads && payloads.length > 0) {
+        localStorage.setItem('contentScript:options', JSON.stringify(payloads));
+      }
+      // TODO: replace the app
     }.bind(this));
   }
 
@@ -108,9 +116,13 @@
     if (latestScriptOptions) {
       try {
         latestScriptOptions = JSON.parse(latestScriptOptions);
+        if (latestScriptOptions.length < 1) {
+          throw "no payloads";
+        }
       } catch(e) {
         localStorage.removeItem('contentScript:options');
         latestScriptOptions = this.default_scripts;
+        localStorage.setItem('contentScript:options', JSON.stringify(latestScriptOptions));
       }
     } else {
       // if there are not any instructions then set the defaults
@@ -130,9 +142,8 @@
           $router.trigger('payloads:didLoad', res.payloads);
 
           // TODO: DRY this up with the default scripts code above
-          if (res.payloads) {
+          if (res.payloads && res.payloads.length > 0) {
             localStorage.setItem('contentScript:options', JSON.stringify(res.payloads));
-            //latestScriptOptions = JSON.parse(res.payloads);
           }
         }
       },

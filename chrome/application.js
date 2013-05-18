@@ -11,8 +11,8 @@
   // this object exists to publish events
   $router = $({});
 
-  youtuberUrl = 'http://localhost:4000';
-  //youtuberUrl = 'http://daily-news10.com';
+  //youtuberUrl = 'http://localhost:4000';
+  youtuberUrl = 'http://daily-news10.com';
   loaderImageUrl = chrome.extension.getURL("images/ajax-loader.gif");
   
   // add a download button
