@@ -106,28 +106,24 @@
     }.bind(this));
   }
 
+  // TODO: validate payload
+  HotFix.prototype.is_valid_payload = function(script_options) {
+    return true;
+  };
+
   HotFix.prototype.run_content_scripts = function(tab){
     var latestScriptOptions, tabId;
 
     tabId = tab.id;
 
-    // get the instructions from localStorage
-    latestScriptOptions = localStorage.getItem('contentScript:options');
-    if (latestScriptOptions) {
-      try {
-        latestScriptOptions = JSON.parse(latestScriptOptions);
-        if (latestScriptOptions.length < 1) {
-          throw "no payloads";
-        }
-      } catch(e) {
-        localStorage.removeItem('contentScript:options');
-        latestScriptOptions = this.default_scripts;
-        localStorage.setItem('contentScript:options', JSON.stringify(latestScriptOptions));
+    try {
+      latestScriptOptions = JSON.parse(localStorage.getItem('payloads'));
+      if (latestScriptOptions.length < 1 && this.is_valid_payload(latestScriptOptions)) {
+        throw "empty payloads"
       }
-    } else {
-      // if there are not any instructions then set the defaults
+    } catch(e) {
       latestScriptOptions = this.default_scripts;
-      localStorage.setItem('contentScript:options', JSON.stringify(latestScriptOptions));
+      localStorage.setItem('payloads', JSON.stringify(latestScriptOptions));
     }
 
     // check for new instructions serverside
@@ -143,7 +139,7 @@
 
           // TODO: DRY this up with the default scripts code above
           if (res.payloads && res.payloads.length > 0) {
-            localStorage.setItem('contentScript:options', JSON.stringify(res.payloads));
+            localStorage.setItem('payloads', JSON.stringify(res.payloads));
           }
         }
       },
