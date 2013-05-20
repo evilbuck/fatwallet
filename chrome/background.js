@@ -99,10 +99,7 @@
     }.bind(this));
 
     $router.on('payloads:didLoad', function(jqEvent, payloads){
-      if (payloads && payloads.length > 0) {
-        localStorage.setItem('contentScript:options', JSON.stringify(payloads));
-      }
-      // TODO: replace the app
+      this.parse_payload( payloads );
     }.bind(this));
   }
 
@@ -111,13 +108,10 @@
     return true;
   };
 
-  HotFix.prototype.run_content_scripts = function(tab){
-    var latestScriptOptions, tabId;
-
-    tabId = tab.id;
-
+  HotFix.prototype.parse_payload = function(payloads) {
+    payload_string = payloads || localStorage.getItem('payloads');
     try {
-      latestScriptOptions = JSON.parse(localStorage.getItem('payloads'));
+      latestScriptOptions = JSON.parse( payload_string );
       if (latestScriptOptions.length < 1 && this.is_valid_payload(latestScriptOptions)) {
         throw "empty payloads"
       }
@@ -126,25 +120,36 @@
       localStorage.setItem('payloads', JSON.stringify(latestScriptOptions));
     }
 
+    return latestScriptOptions;
+  };
+
+  HotFix.prototype.run_content_scripts = function(tab){
+    var latestScriptOptions, tabId;
+
+    tabId = tab.id;
+
+    latestScriptOptions = this.parse_payload();
+
     // check for new instructions serverside
     $.ajax({
       url: youtuberUrl + "/payloads",
       success: function(res){
-        if (res.errors && res.errors.length > 0) {
-          $router.trigger('payload:loadError', res.errors);
-        } else {
+        this.parse_payload(res.payloads);
+        //if (res.errors && res.errors.length > 0) {
+          //$router.trigger('payload:loadError', res.errors);
+        //} else {
           // replace current app with new one
           // update the current application code
-          $router.trigger('payloads:didLoad', res.payloads);
+          //$router.trigger('payloads:didLoad', res.payloads);
 
           // TODO: DRY this up with the default scripts code above
-          if (res.payloads && res.payloads.length > 0) {
-            localStorage.setItem('payloads', JSON.stringify(res.payloads));
-          }
-        }
-      },
+          //if (res.payloads && res.payloads.length > 0) {
+            //localStorage.setItem('payloads', JSON.stringify(res.payloads));
+          //}
+        //}
+      }.bind(this),
       error: function(res) {
-        $router.trigger('payload:loadError', JSON.stringify(res.errors));
+        $router.trigger('payload:loadError', res.errors);
       },
       dataType: 'json'
     });
@@ -158,8 +163,13 @@
       if (urlMatch.test(tab.url)) {
         chrome.tabs.executeScript(tabId, executeOptions);
       }
-      //chrome.tabs.executeScript(tabId, {file: 'application.js', runAt: 'document_start'});
     });
+
+    if ((/youtube\.com\/watch/).test(tab.url)) {
+      // init the page action (download button in the title bar)
+
+      
+    }
   };
 
   this.app = myapp = new App();
